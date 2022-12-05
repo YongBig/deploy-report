@@ -13,6 +13,9 @@
                 <m-date-picker :pDate="this.date" @getTimeEvent="getTime"></m-date-picker>
             </el-form-item>
             <el-form-item :label="$t('tables.deployment.search.total')">
+                <span>{{ this.originList.length }}</span>
+            </el-form-item>
+            <el-form-item :label="$t('tables.deployment.search.currentTotal')">
                 <span>{{ this.list.length }}</span>
             </el-form-item>
             <el-form-item>
@@ -29,15 +32,16 @@
                 fit
                 highlight-current-row
                 style="width: 100%;"
+                :default-sort = "{prop: 'id', order: 'ascending'}"
         >
             <!--序号-->
-            <el-table-column :label="$t('tables.deployment.ID')" prop="id" sortable="custom" align="center" width="80">
+            <el-table-column :label="$t('tables.deployment.ID')" prop="id" sortable align="center" width="80">
                 <template v-slot="{row}">
                     <span>{{ row.id }}</span>
                 </template>
             </el-table-column>
             <!--唯一索引-->
-            <el-table-column :label="$t('tables.deployment.uniqid')" >
+            <el-table-column :label="$t('tables.deployment.uniqid')">
                 <template v-slot="{row}">
                     <span>{{ row.uniqid }}</span>
                 </template>
@@ -52,7 +56,7 @@
             <el-table-column :label="$t('tables.deployment.runtime')">
                 <template v-slot="{row}">
                     <el-tag :type="runtimeShow[row.runtime]?runtimeShow[row.runtime].class:'danger'">
-                        {{ runtimeShow[row.runtime]?runtimeShow[row.runtime].display:row.runtime }}
+                        {{ runtimeShow[row.runtime] ? runtimeShow[row.runtime].display : row.runtime }}
                     </el-tag>
                 </template>
             </el-table-column>
@@ -60,38 +64,38 @@
             <el-table-column :label="$t('tables.deployment.lastState')">
                 <template v-slot="{row}">
                     <el-tag effect="dark" :type="stateShow[row.lastState]?stateShow[row.lastState].class:''">
-                        {{ stateShow[row.lastState]?stateShow[row.lastState].display:row.lastState }}
+                        {{ stateShow[row.lastState] ? stateShow[row.lastState].display : row.lastState }}
                     </el-tag>
                 </template>
             </el-table-column>
             <!--最新应用版本-->
             <el-table-column :label="$t('tables.deployment.lastVersion')">
                 <template v-slot="{row}">
-                    <span>{{row.lastVersion}}</span>
+                    <span>{{ row.lastVersion }}</span>
                 </template>
             </el-table-column>
             <!--最新操作-->
             <el-table-column :label="$t('tables.deployment.lastAction')">
                 <template v-slot="{row}">
-                    <span>{{row.lastAction}}</span>
+                    <span>{{ row.lastAction }}</span>
                 </template>
             </el-table-column>
             <!--历史操作数量-->
             <el-table-column :label="$t('tables.deployment.revisionNum')">
                 <template v-slot="{row}">
-                    <span class="link-type" @click="handleRevision(row)">{{row.revisionNum}}</span>
+                    <span class="link-type" @click="handleRevision(row)">{{ row.revisionNum }}</span>
                 </template>
             </el-table-column>
             <!--耗时-->
             <el-table-column :label="$t('tables.deployment.revesionDelay')">
                 <template v-slot="{row}">
-                    <span>{{ row.revesionDelay | millisecondConvertSecond()}}s</span>
+                    <span>{{ row.revesionDelay | millisecondConvertSecond() }}s</span>
                 </template>
             </el-table-column>
             <!--最后更新时间-->
             <el-table-column :label="$t('tables.deployment.lastUpdateTime')">
                 <template v-slot="{row}">
-                    <span>{{row.lastUpdateTime | getTimestamp() | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>
+                    <span>{{ row.lastUpdateTime | getTimestamp() | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
                 </template>
             </el-table-column>
         </el-table>
@@ -100,6 +104,8 @@
 
 <script>
 import MDatePicker from "@/components/table/components/MDatePicker";
+import {getTimestamp} from "@/utils"
+
 export default {
     name: 'DeploymentTable',
     data() {
@@ -112,6 +118,7 @@ export default {
             date: [],
             timeout: null,
             list: [],
+            originList: [],
             runtimeShow: {
                 production: {display: this.$t("tables.deployment.tag.production"), class: "success"},
                 test: {display: this.$t("tables.deployment.tag.test"), class: "info"},
@@ -133,18 +140,18 @@ export default {
         onRest() {
             this.uniqid = ""
             this.date = []
+            this.onSubmit()
         },
         //查询按钮
         onSubmit() {
-            console.log(this.uniqid);
-            console.log(this.date);
+            this.handleFilter(this.uniqid,this.date)
         },
         //uid初始化数据
         searchUIDAll() {
-            var arr =[]
+            var arr = []
             var data = this.global.DATA.ins
-            for (var i in data){
-                arr.push({"value":data[i].uniqid})
+            for (var i in data) {
+                arr.push({"value": data[i].uniqid})
             }
             return arr;
         },
@@ -170,22 +177,40 @@ export default {
         },
         handleRevision(row) {
             //如果是 0 ，无法跳转rversion
-            if(!row.revisionNum){
+            if (!row.revisionNum) {
                 return
             }
             //todo
-           console.log(row)
+            this.$emit('getResionUniqid',row.uniqid)
         },
+        handleFilter(uniqid, date) {
+            var list  = []
+            for (var i in this.originList) {
+                if (uniqid != null) {
+                    if (-1 === this.originList[i].uniqid.toLowerCase().indexOf(uniqid.toLowerCase())) {
+                        continue
+                    }
+                }
+                if (date.length > 0) {
+                    if (date[0] > getTimestamp(this.originList[i].lastUpdateTime) || getTimestamp(this.originList[i].lastUpdateTime) > date[1]) {
+                        continue
+                    }
+                }
+                list.push(this.originList[i])
+            }
+            this.list = list
+        }
     },
     mounted() {
         var ini = 0
         this.restaurants = this.searchUIDAll();
         var data = this.global.DATA.ins;
-        for (var i in data){
-            ini= parseInt(i)+ 1
-            data[i].id= ini;
+        for (var i in data) {
+            ini = parseInt(i) + 1
+            data[i].id = ini;
         }
-        this.list = data;
+        this.originList = data;
+        this.onSubmit()
     }
 }
 

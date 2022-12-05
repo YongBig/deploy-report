@@ -46,7 +46,9 @@ const en = {
             search:{
                 uniqid: "UID",
                 data:"Created Time Range",
-                total:"total:"
+                total:"total:",
+                currentTotal:"Current Total:"
+
             },
             tag:{
                 production:"Production",

@@ -46,7 +46,8 @@ const zh = {
             search:{
                 uniqid: "UID",
                 data:"创建时间",
-                total:"总数:"
+                total:"总数:",
+                currentTotal:"当前总数:"
             },
             tag:{
                 production:"生产环境",

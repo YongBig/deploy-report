@@ -57,24 +57,28 @@ const DATA= {
                             {
                                 "action": "PreClear",
                                 "status":"true",
+                                "last_transition_time":"2022-12-5 14:34:09.418",
                                 "message": " PreClear success",
                                 "delay": 1009
                             },
                             {
                                 "action": "Apply",
                                 "status":"true",
+                                "last_transition_time":"2022-12-5 14:34:09.418",
                                 "message": " Apply success",
                                 "delay": 1252
                             },
                             {
                                 "action": "HealthCheck",
                                 "status":"true",
+                                "last_transition_time":"2022-12-5 14:34:09.418",
                                 "message": " HealthCheck success",
                                 "delay": 61396
                             },
                             {
                                 "action": "PostClear",
                                 "status":"false",
+                                "last_transition_time":"2022-12-5 14:34:09.418",
                                 "message": " HealthCheck failed",
                                 "delay": 3
                             }
