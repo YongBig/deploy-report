@@ -1,28 +1,43 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app" :key="$store.state.language">
+        <el-container>
+            <el-header>
+                <nav-report></nav-report>
+            </el-header>
+
+            <over-view></over-view>
+
+            <el-main>
+                <tab></tab>
+            </el-main>
+        </el-container>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import NavReport from './components/NavReport.vue';
+import OverView from "@/components/OverView";
+import Tab from "@/components/Tab";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+    name: 'app',
+    components: {
+        NavReport,
+        OverView,
+        Tab,
+    }
 }
 </script>
 
-<style>
+<style scoped>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+}
+
+.el-header, .el-main {
+    padding: 0;
 }
 </style>
