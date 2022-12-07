@@ -6,6 +6,7 @@ function resolve(dir) {
 module.exports = defineConfig({
     publicPath:process.env.NODE_ENV==='production'?'./':'/',
     transpileDependencies: true,
+    productionSourceMap:true,
     // eslint-disable-next-line no-unused-vars
     chainWebpack(config) {
 
@@ -29,5 +30,6 @@ module.exports = defineConfig({
                 symbolId: 'icon-[name]'
             })
             .end()
+
     }
 })
