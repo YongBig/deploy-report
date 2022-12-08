@@ -1,12 +1,19 @@
 const {defineConfig} = require('@vue/cli-service')
 const path = require("path");
+
 function resolve(dir) {
     return path.join(__dirname, dir)
 }
+
 module.exports = defineConfig({
-    publicPath:process.env.NODE_ENV==='production'?'./':'/',
+    publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
     transpileDependencies: true,
-    productionSourceMap:true,
+    productionSourceMap: true,
+    // pluginOptions: {
+    //     compression: {
+    //         modes: [],
+    //     }
+    // },
     // eslint-disable-next-line no-unused-vars
     chainWebpack(config) {
 
